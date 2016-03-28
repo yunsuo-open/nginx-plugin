@@ -17,8 +17,7 @@
 	
 	6) 如果您的环境是tengine,可以跳过这一步。对于nginx版本，由于其不支持post过滤，所以需要修改nginx源码目录下src/http/ngx_http_upstream.c 文件，步骤如下：
 		
-		a. 查找 static void ngx_http_upstream_init_request(ngx_http_request_t *r)函数，并在其上方添加
-		在源码目录下 中 找到函数 static void ngx_http_upstream_init_request(ngx_http_request_t *r)，在其
+		a. 在源码目录下 中 找到函数 static void ngx_http_upstream_init_request(ngx_http_request_t *r)，在其
 		所在行上方添加：int ngx_http_yunsuo_post_in_handler(ngx_http_request_t *r);
 		
 		b. 在ngx_http_upstream_init_request函数开头，变量声明后，添加：
