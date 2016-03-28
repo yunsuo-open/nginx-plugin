@@ -150,35 +150,26 @@ int init_functions(ngx_cycle_t *cycle)
 #endif
 	if (hMod)
 	{
-		export_functions_t *functions = (export_functions_t*)GetProcAddress(hMod, "functions");
-		if (functions)
-		{
-			frame_init = functions->frame_init;
-			frame_release = functions->frame_release;
-			set_set_out_header_handler = functions->set_set_out_header_handler;
-			set_register_connection_cleanup_handler = functions->set_register_connection_cleanup_handler;
-			set_register_request_cleanup_handler = functions->set_register_request_cleanup_handler;
-			set_ngx_http_write_back_handler = functions->set_ngx_http_write_back_handler;
-			set_replace_out_body_handler = functions->set_replace_out_body_handler;
-			set_http_finalize_request_handler = functions->set_http_finalize_request_handler;
-			set_get_connection_map_handler = functions->set_get_connection_map_handler;
-			set_get_request_map_handler = functions->set_get_request_map_handler;
-			set_get_request_or_response_data_handler = functions->set_get_request_or_response_data_handler;
-			store_data_by_type = functions->store_data_by_type;
-			init_map = functions->init_map;
-			connection_cleanup_handle = functions->connection_cleanup_handle;
-			connection_check = functions->connection_check;
-			ngx_request_cleanup_handle = functions->ngx_request_cleanup_handle;
-			request_check = functions->request_check;
-			response_header_check = functions->response_header_check;
-			response_body_check = functions->response_body_check;
-			post_in_check = functions->post_in_check;
-		}
-		else
-		{
-			ngx_log_error(NGX_LOG_ERR, cycle->log, 0, "%s", GetLastError());
-			result = -1;
-		}
+		frame_init = GetProcAddress(hMod, "frame_init");
+		frame_release = GetProcAddress(hMod, "frame_release");
+		set_set_out_header_handler = GetProcAddress(hMod, "set_set_out_header_handler");
+		set_register_connection_cleanup_handler = GetProcAddress(hMod, "set_register_connection_cleanup_handler");
+		set_register_request_cleanup_handler = GetProcAddress(hMod, "set_register_request_cleanup_handler");
+		set_ngx_http_write_back_handler = GetProcAddress(hMod, "set_ngx_http_write_back_handler");
+		set_replace_out_body_handler = GetProcAddress(hMod, "set_replace_out_body_handler");
+		set_http_finalize_request_handler = GetProcAddress(hMod, "set_http_finalize_request_handler");
+		set_get_connection_map_handler = GetProcAddress(hMod, "set_get_connection_map_handler");
+		set_get_request_map_handler = GetProcAddress(hMod, "set_get_request_map_handler");
+		set_get_request_or_response_data_handler = GetProcAddress(hMod, "set_get_request_or_response_data_handler");
+		store_data_by_type = GetProcAddress(hMod, "store_data_by_type");
+		init_map = GetProcAddress(hMod, "init_map");
+		connection_cleanup_handle = GetProcAddress(hMod, "connection_cleanup_handle");
+		connection_check = GetProcAddress(hMod, "connection_check");
+		ngx_request_cleanup_handle = GetProcAddress(hMod, "ngx_request_cleanup_handle");
+		request_check = GetProcAddress(hMod, "request_check");
+		response_header_check = GetProcAddress(hMod, "response_header_check");
+		response_body_check = GetProcAddress(hMod, "response_body_check");
+		post_in_check = GetProcAddress(hMod, "post_in_check");		
 	}
 	else
 	{
