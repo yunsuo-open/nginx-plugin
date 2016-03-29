@@ -45,30 +45,6 @@ typedef void (*response_header_check_pt)(void *data);
 typedef void (*response_body_check_pt)(void *data, void **body);
 typedef int (*post_in_check_pt)(void *data, void *post_buf);
 
-typedef struct  
-{
-	frame_init_pt frame_init;
-	frame_release_pt frame_release;
-	set_set_out_header_pt set_set_out_header_handler;
-	set_register_connection_cleanup_pt set_register_connection_cleanup_handler;
-	set_register_request_cleanup_pt set_register_request_cleanup_handler;
-	set_ngx_http_write_back_pt set_ngx_http_write_back_handler;
-	set_replace_out_body_pt set_replace_out_body_handler;
-	set_http_finalize_request_pt set_http_finalize_request_handler;
-	set_get_connection_map_pt set_get_connection_map_handler;
-	set_get_request_map_pt set_get_request_map_handler;
-	set_get_request_or_response_data_pt set_get_request_or_response_data_handler;
-	store_data_by_type_pt store_data_by_type;
-	init_map_pt init_map;
-	connection_cleanup_handle_pt connection_cleanup_handle;
-	connection_check_pt connection_check;
-	ngx_request_cleanup_handle_pt ngx_request_cleanup_handle;
-	request_check_pt request_check;
-	response_header_check_pt response_header_check;
-	response_body_check_pt response_body_check;
-	post_in_check_pt post_in_check;
-}export_functions_t;
-
 frame_init_pt frame_init;
 frame_release_pt frame_release;
 set_set_out_header_pt set_set_out_header_handler;
