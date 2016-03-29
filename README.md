@@ -130,9 +130,9 @@ FAQ：
 		有如下三种方式可以实现卸载插件：
 		
 			方式一：现有版本 nginx 默认不支持从客户端卸载，如果想支持从客户端卸载， 需要手动将 系统原有的 nginx 重命名为 nginx.bak, 
-			并将之替换 /usr/local/yunsuo_agent/nginx/backup 目录下的 nginx.bak， 这样就可以使用客户端的插件卸载功能了
+			并将之替换 /usr/local/yunsuo_agent/nginx/backup 目录下的 nginx.bak（此操作需要关闭云锁自保护功能）， 这样就可以使用客户端的插件卸载功能了
 			
-			方式二：手动删除或者重命名 /usr/local/yunsuo_agent/nginx/ 目录下的 libnginx_plugin.so， 重启 nginx 服务即可
+			方式二：手动删除或者重命名 /usr/local/yunsuo_agent/nginx/ 目录下的 libnginx_plugin.so（此操作需要关闭云锁自保护功能）， 重启 nginx 服务即可
 			
 			方式三：手动使用系统原有的 nginx 直接替换 当前使用的带有云锁插件的 nginx
 			
