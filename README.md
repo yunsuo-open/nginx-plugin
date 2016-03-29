@@ -112,18 +112,32 @@ nginx备份并替换掉您当前系统中使用的nginx。卸载时，会将系�
 	   
 
 FAQ：
-1)什么情况下我需要自己编译云锁的nginx模块？
-	a.当您的nginx使用了第三方或者自己开发的模块的时候，需要编译云锁的nginx模块。您可以通过nginx -V命令查看输出的
-	 信息里是否包含了 --add-module= 的字样 (例如：--add-module=../ngx_cache_purge-1.3 说明使用了ngx_cache_purge-1.3第三方
-	 模块)
-	b.当使用tengine的时候，需要编译云锁的nginx模块
-	c.当您发现当前使用的nginx版本比我们自动安装的版本高的时候，可以自己编译云锁的nginx模块
+	1)什么情况下我需要自己编译云锁的nginx模块？
+		a.当您的nginx使用了第三方或者自己开发的模块的时候，需要编译云锁的nginx模块。您可以通过nginx -V命令查看输出的
+		 信息里是否包含了 --add-module= 的字样 (例如：--add-module=../ngx_cache_purge-1.3 说明使用了ngx_cache_purge-1.3第三方
+		 模块)
+		b.当使用tengine的时候，需要编译云锁的nginx模块
+		c.当您发现当前使用的nginx版本比我们自动安装的版本高的时候，可以自己编译云锁的nginx模块
 
-2)如果我把云锁卸载了，nginx需要重新编译吗？
-      不需要，云锁的nginx模块会判断云锁是否安装，如果不安装则不生效。当然您也可以替换回之前的nginx
+	2)如果我把云锁卸载了，nginx需要重新编译吗？
+		不需要，云锁的nginx模块会判断云锁是否安装，如果不安装则不生效。当然您也可以替换回之前的nginx
 
     3)我应该先安装云锁，还是先编译nginx?
-  都可以，没有先后顺序关系
+		都可以，没有先后顺序关系
+	  
+	4)怎样单独卸载 nginx 插件？
+	
+		有如下三种方式可以实现卸载插件：
+		
+			方式一：现有版本 nginx 默认不支持从客户端卸载，如果想支持从客户端卸载， 需要手动将 系统原有的 nginx 重命名为 nginx.bak, 
+			并将之替换 /usr/local/yunsuo_agent/nginx/backup 目录下的 nginx.bak， 这样就可以使用客户端的插件卸载功能了
+			
+			方式二：手动删除或者重命名 /usr/local/yunsuo_agent/nginx/ 目录下的 libnginx_plugin.so， 重启 nginx 服务即可
+			
+			方式三：手动使用系统原有的 nginx 直接替换 当前使用的带有云锁插件的 nginx
+			
+		推荐使用第一种方式， 因为其便于后续的安装和卸载
+		
 
 
   
