@@ -538,11 +538,17 @@ void get_request_or_response_data_handler(void *request, void *data, int data_ty
 			store_data_by_type("Content-Type", 12, (char*)r->headers_out.content_type.data, r->headers_out.content_type.len, data, 0);
 		}
 	}
-	else
+	else if(5 == data_type)
 	{
 		if (r->request_body && r->request_body->bufs)
 		{
 			store_data_by_type("Post-Bufs", 9, (void*)r->request_body->bufs, 0, data, 2);
+		}
+	}
+	else {
+		if (r->headers_in.content_type->value.data)
+		{
+			store_data_by_type("Content-Type_IN", 15, (char*)r->headers_in.content_type->value.data, r->headers_in.content_type->value.len, data, 0);
 		}
 	}
 }
