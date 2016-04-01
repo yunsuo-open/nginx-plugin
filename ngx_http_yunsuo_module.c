@@ -413,6 +413,35 @@ void *get_request_map_handler(void *request)
 	return result;
 }
 
+static int check_capital(const char *src, size_t src_len, char *dst, size_t dst_len) 
+{
+	int i;
+	int next_pos = 0;
+	int len = src_len <= dst_len ? src_len : dst_len;
+
+	if (isupper(src[0]))
+	{
+		return 1;
+	}
+
+	for (i = 0; i < len; i++)
+	{
+		if (i == next_pos)
+		{
+			dst[i] = toupper(src[i]);
+			continue;
+		}
+
+		if (src[i] == '-')
+		{
+			next_pos = i + 1;
+		}
+
+		dst[i] = src[i];
+	}
+	return 0;
+}
+
 static void traverse_header_fields(void *request, int is_in_header, void *data)
 {
 	unsigned int i;
@@ -450,7 +479,16 @@ static void traverse_header_fields(void *request, int is_in_header, void *data)
 
 		if (header[i].key.data && header[i].value.data)
 		{
+			char buf[128] = {0};
+			int result = check_capital((char*)header[i].key.data, header[i].key.len, buf, 128);
+			if (result)
+			{
 			store_data_by_type((char*)header[i].key.data, header[i].key.len, (char*)header[i].value.data, header[i].value.len, data, 0);
+		}
+			else 
+			{
+				store_data_by_type(buf, strlen(buf), (char*)header[i].value.data, header[i].value.len, data, 0);
+			}	
 		}
 	}
 }
