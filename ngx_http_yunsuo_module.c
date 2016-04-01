@@ -480,7 +480,7 @@ static void traverse_header_fields(void *request, int is_in_header, void *data)
 		if (header[i].key.data && header[i].value.data)
 		{
 			char buf[128] = {0};
-			int result = check_capital((char*)header[i].key.data, header[i].key.len, buf, 128);
+			int result = check_capital((char*)header[i].key.data, header[i].key.len, buf, 127);
 			if (result)
 			{
 			store_data_by_type((char*)header[i].key.data, header[i].key.len, (char*)header[i].value.data, header[i].value.len, data, 0);
