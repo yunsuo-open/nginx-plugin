@@ -584,7 +584,7 @@ void get_request_or_response_data_handler(void *request, void *data, int data_ty
 		}
 	}
 	else {
-		if (r->headers_in.content_type->value.data)
+		if (r->headers_in.content_type && r->headers_in.content_type->value.data)
 		{
 			store_data_by_type("Content-Type_IN", 15, (char*)r->headers_in.content_type->value.data, r->headers_in.content_type->value.len, data, 0);
 		}
