@@ -105,7 +105,7 @@
 ## 2. 让云锁识别您自己编译的nginx
 1. 安装云锁，如果您已经安装了云锁，可跳过此步骤。如果还没有，请到http://www.yunsuo.com.cn/ht/software/下载并安装云锁
 2. cd /usr/local/yunsuo_agent/nginx/
-3. ./configure_compiled_nginx nginx_install_path (nginx_install_path为nginx的安装路径,即configure时 --prefix=path如果未指定过路径, 那么默认为/usr/local/nginx)
+3. ./configure_compile_nginx nginx_install_path (nginx_install_path为nginx的安装路径,即configure时 --prefix=path如果未指定过路径, 那么默认为/usr/local/nginx)
 	   
 
 ## FAQ：
