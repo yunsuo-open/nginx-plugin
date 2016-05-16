@@ -1,4 +1,4 @@
-#include <ngx_config.h>
+﻿#include <ngx_config.h>
 #include <ngx_core.h>
 #include <ngx_http.h>
 #include <nginx.h>
@@ -83,7 +83,11 @@ void get_yunsuo_instatll_path(char *install_path, int *path_len)
 			break;
 		}
 		
-		fgets(buf, 64, fp);
+		if (!fgets(buf, 64, fp))
+		{
+			break;
+		}
+
 		len = strlen(buf);
 		if (len > *path_len)
 		{
