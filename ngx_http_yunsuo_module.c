@@ -84,7 +84,11 @@ void get_yunsuo_instatll_path(char *install_path, int *path_len)
 			break;
 		}
 		
-		fgets(buf, 64, fp);
+		if(!fgets(buf, 64, fp))
+		{
+			break;
+		}
+
 		len = strlen(buf);
 		if (len > *path_len)
 		{
