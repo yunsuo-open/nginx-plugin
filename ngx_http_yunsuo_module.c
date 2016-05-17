@@ -4,6 +4,7 @@
 #include <nginx.h>
 
 #include <stdio.h>
+#include <ctype.h>
 
 #ifdef WIN32
 #include <WS2tcpip.h>
