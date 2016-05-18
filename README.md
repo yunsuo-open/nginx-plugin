@@ -131,6 +131,18 @@
         
 > 推荐使用第一种方式， 因为其便于后续的安装和卸载
 		
-
+### Q5.编译时可能出现的几种错误解决方法
+	1、 遇如下错误信息 ： cc1: all warnings being treated as errors， 编译器把警告信息作为错误处理了
+		解决： 修改 objs/Makefile 
+		把 CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g
+		修改为：CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter  -g 即 去掉 -Werror 选项
+		重新 make， 注意是重新 make 不要重新 ./configure 
+	
+	2、 遇如下错误信息： undefined reference to `dlclose'， 由于编译器版本过高， 需要在链接时， 加入-ldl 选项
+		解决： 修改 objs/Makefile
+		搜索 -lpthread， 定位到该行结束， 加入 -ldl
+		形如 -lpthread -lcrypt 修改为 -lpthread -lcrypt -ldl
+		重新 make， 注意是重新make 不要重新 ./configure 
+		
 www.yunsuo.com.cn
 
