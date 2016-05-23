@@ -138,7 +138,7 @@
 		修改为：CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter  -g 即 去掉 -Werror 选项
 		重新 make， 注意是重新 make 不要重新 ./configure 
 	
-	2、 遇如下错误信息： undefined reference to `dlclose'， 由于编译器版本过高， 需要在链接时， 加入-ldl 选项
+	2、 遇如下错误信息： undefined reference to `dlclose'， 需要在链接时， 加入-ldl 选项
 		解决： 修改 objs/Makefile
 		搜索 -lpthread， 定位到该行结束， 加入 -ldl
 		形如 -lpthread -lcrypt 修改为 -lpthread -lcrypt -ldl
