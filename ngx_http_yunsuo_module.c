@@ -45,6 +45,7 @@ typedef int (*request_check_pt)(void *data, uintptr_t method);
 typedef void (*response_header_check_pt)(void *data);
 typedef void (*response_body_check_pt)(void *data, void **body);
 typedef int (*post_in_check_pt)(void *data, void *post_buf);
+typedef int (*post_in_check2_pt)(void *data, void *post_buf);
 
 frame_init_pt frame_init;
 frame_release_pt frame_release;
@@ -66,6 +67,7 @@ request_check_pt request_check;
 response_header_check_pt response_header_check;
 response_body_check_pt response_body_check;
 post_in_check_pt post_in_check;
+post_in_check2_pt post_in_check2;
 
 #if !defined (WIN32)
 void get_yunsuo_instatll_path(char *install_path, int *path_len)
@@ -152,6 +154,7 @@ int init_functions(ngx_cycle_t *cycle)
 		response_header_check = GetProcAddress(hMod, "response_header_check");
 		response_body_check = GetProcAddress(hMod, "response_body_check");
 		post_in_check = GetProcAddress(hMod, "post_in_check");		
+		post_in_check2 = GetProcAddress(hMod, "post_in_check2");
 	}
 	else
 	{
@@ -191,6 +194,19 @@ ngx_int_t tengine_http_yunsuo_post_body_filter(ngx_http_request_t *r, ngx_buf_t 
 		return NGX_OK;
 	}
 	return ngx_http_next_input_body_filter(r, buf);
+}
+#endif
+
+#if defined (HIGHERTHAN8)
+ngx_http_request_body_filter_pt   ngx_http_top_request_body_filter;
+static ngx_http_request_body_filter_pt	ngx_http_next_request_body_filter;
+ngx_int_t http_yunsuo_post_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
+{
+	if (post_in_check2 != NULL && post_in_check2(r, in))
+	{
+		return NGX_OK;
+	}
+	return ngx_http_next_request_body_filter(r, in);
 }
 #endif
 
@@ -523,7 +539,10 @@ void get_request_or_response_data_handler(void *request, void *data, int data_ty
 
 		if (NULL != ngx_http_map_uri_to_path(r, &full_path, &path_len, 0))
 		{
-			store_data_by_type("File-Path", 9, (char*)full_path.data, full_path.len, data, 0);
+			size_t len1 = full_path.len;
+			size_t len2 = strlen((char*)full_path.data);
+			size_t length = len1 <= len2 ? len1 : len2;
+			store_data_by_type("File-Path", 9, (char*)full_path.data, length, data, 0);
 		}
 		if (r->uri.data)
 		{
@@ -579,6 +598,10 @@ void get_request_or_response_data_handler(void *request, void *data, int data_ty
 		if (r->headers_out.content_type.data)
 		{
 			store_data_by_type("Content-Type", 12, (char*)r->headers_out.content_type.data, r->headers_out.content_type.len, data, 0);
+		}
+		if (r->headers_out.content_encoding && r->headers_out.content_encoding->value.data)
+		{
+			store_data_by_type("Content-Encoding", 16, (char*)r->headers_out.content_encoding->value.data, r->headers_out.content_encoding->value.len, data, 0);
 		}
 	}
 	else if(5 == data_type)
@@ -655,6 +678,11 @@ static ngx_int_t ngx_http_yunsuo_filter_init(ngx_conf_t *cf)
 #if defined(TENGINE)
 	ngx_http_next_input_body_filter = ngx_http_top_input_body_filter;
 	ngx_http_top_input_body_filter = tengine_http_yunsuo_post_body_filter;
+#endif
+
+#if defined (HIGHERTHAN8)
+	ngx_http_next_request_body_filter = ngx_http_top_request_body_filter;
+	ngx_http_top_request_body_filter = http_yunsuo_post_body_filter;
 #endif
 
 	return NGX_OK;
