@@ -539,9 +539,11 @@ void get_request_or_response_data_handler(void *request, void *data, int data_ty
 
 		if (NULL != ngx_http_map_uri_to_path(r, &full_path, &path_len, 0))
 		{
-			size_t len1 = full_path.len;
-			size_t len2 = strlen((char*)full_path.data);
-			size_t length = len1 <= len2 ? len1 : len2;
+			size_t length = full_path.len;
+			if (full_path.data[length-1] == '\0')
+			{
+				length = strlen((char*)full_path.data);
+			}
 			store_data_by_type("File-Path", 9, (char*)full_path.data, length, data, 0);
 		}
 		if (r->uri.data)
