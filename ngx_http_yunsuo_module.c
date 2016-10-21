@@ -382,6 +382,11 @@ void replace_out_body(void *request, const char *new_body, void **old_body)
 		return; 
 	}
 
+	if (!in)
+	{
+		in = (ngx_chain_t*)ngx_pnalloc(r->pool, sizeof(ngx_chain_t));
+	}
+
 	b->last = (u_char*)ngx_cpymem(b->pos, new_body, len);
 	b->memory = 1;
 	b->last_buf = 1;

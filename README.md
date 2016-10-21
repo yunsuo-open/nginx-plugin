@@ -13,7 +13,11 @@
 - 3.unzip nginx-plugin-master.zip
 - 4.cd nginx-plugin-master
 - 5.pwd 获取当前云锁插件源码所在目录的全路径 (假设为：/home/nginx-plugin-master，实际情况以pwd输出为准)	
-- 6.如果您的环境是tengine,可以跳过这一步。对于nginx版本，由于其不支持post过滤，所以需要修改nginx源码目录下src/http/ngx_http_upstream.c 文件,步骤如下：
+- 6.以下两种情况， 可以跳过这一步骤：
+	1）您的 nginx 是 tengine。 
+	2）nginx 版本大于等于 1.8.0 并且 安装的云锁为V3， 此时需要关注 第 8 条说明。
+	
+	除以上两种情况，对于 nginx 来说，由于其不支持post过滤，所以需要修改nginx源码目录下src/http/ngx_http_upstream.c 文件,步骤如下：
 
     - a.查找 static void ngx_http_upstream_init_request(ngx_http_request_t *r)函数，在其所在行上方添加：int ngx_http_yunsuo_post_in_handler(ngx_http_request_t *r);
     - b.在ngx_http_upstream_init_request函数开头，变量声明后，添加：
@@ -97,9 +101,14 @@
             ./configure --prefix=/usr/local/nginx --with-http_stub_status_module \
                 --with-http_ssl_module --with-http_gzip_static_module \
                 --add-module=../ngx_cache_purge-1.3  --add-module=/home/nginx-plugin-master
-    
-- 8.编译 nginx (注意：如果原本已经有 nginx, 只执行 make 即可，make install 会覆盖掉你的 nginx.conf)
-- 9.将系统当前使用中的nginx二进制文件替换为刚刚编译好的包含了云锁模块的nginx文件即可
+
+- 8.当您的 nginx 版本大于等于 1.8.0 并且安装的云锁为V3时，想要支持 POST 防护，
+只需在 configure 生成的 Makefile （即 objs/Makefile 文件）中 CFLAGS 追加宏定义 HIGHERTHAN8
+	形如 ：	CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g  
+	修改为：CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g -DHIGHERTHAN8
+	
+- 9.编译 nginx (注意：如果原本已经有 nginx, 只执行 make 即可，make install 会覆盖掉你的 nginx.conf)
+- 10.将系统当前使用中的nginx二进制文件替换为刚刚编译好的包含了云锁模块的nginx文件即可
 	
 
 ## 2. 让云锁识别您自己编译的nginx
