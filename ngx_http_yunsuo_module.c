@@ -18,11 +18,6 @@
 #include <dlfcn.h>
 #define GetProcAddress dlsym
 #define GetLastError dlerror
-
-#if defined (SHARELIB)
-#define HIGHERTHAN8
-char jt_signature[64] = {'8'};
-#endif
 void* hMod;
 #else
 HMODULE hMod;
@@ -118,8 +113,8 @@ void get_yunsuo_instatll_path(char *install_path, int *path_len)
 	
 	if (!flags)
 	{
-		memcpy(install_path, "/usr/local/yunsuo_agent", 23);
-		*path_len = 23;
+		memcpy(install_path, "/usr/local/yunsuo_agent", 24);
+		*path_len = 24;
 	}
 }
 #endif
@@ -529,16 +524,12 @@ void get_request_or_response_data_handler(void *request, void *data, int data_ty
 	ngx_http_request_t *r = (ngx_http_request_t *)request;
 	if (0 == data_type)
 	{
-		if (r->connection && r->connection->addr_text.data)
-		{
-			store_data_by_type("Remote-Ip", 9, (char*)r->connection->addr_text.data, r->connection->addr_text.len, data, 0);
-		}
-
-		if (r->connection && r->connection->listening && r->connection->listening->addr_text.data)
-		{
-			ngx_str_t local_addr = r->connection->listening->addr_text;
-			store_data_by_type("Local-Ip", 8, local_addr.data, local_addr.len, data, 0);
-		}
+		char *remote_ip;
+		char *local_ip;
+		remote_ip = inet_ntoa(((struct sockaddr_in *)r->connection->sockaddr)->sin_addr);
+		store_data_by_type("Remote-Ip", 9, remote_ip, strlen(remote_ip), data, 0);
+		local_ip = inet_ntoa(((struct sockaddr_in *)r->connection->local_sockaddr)->sin_addr);
+		store_data_by_type("Local-Ip", 8, local_ip, strlen(local_ip), data, 0);
 
 		if (r->headers_in.host && r->headers_in.host->value.data )
 		{
@@ -572,10 +563,7 @@ void get_request_or_response_data_handler(void *request, void *data, int data_ty
 		{
 			store_data_by_type("Method", 6, (char*)r->method_name.data, r->method_name.len, data, 0);
 		}
-
-		if (r->connection && r->connection->listening && r->connection->listening->sockaddr)
-		{
-			sin = (struct sockaddr_in *)r->connection->listening->sockaddr;
+		sin = (struct sockaddr_in *)r->connection->local_sockaddr;
 		if (NULL != sin)
 		{
 			int len = 0;
@@ -588,8 +576,6 @@ void get_request_or_response_data_handler(void *request, void *data, int data_ty
 #endif
 			store_data_by_type("Port", 4, buf, len, data, 0);
 		}
-		}
-		
 		traverse_header_fields(r, 1, data);
 	}
 	else if (2 == data_type)
@@ -726,14 +712,8 @@ static ngx_http_module_t  ngx_http_yunsuo_module_ctx =
 	NULL	/* merge location configuration */
 };
 
-
 ngx_module_t  ngx_http_yunsuo_module = {
-#if defined (SHARELIB)
-	(ngx_uint_t) -1, (ngx_uint_t) -1,                           \
-	NULL, 0, 0, nginx_version, jt_signature,
-#else
 	NGX_MODULE_V1,
-#endif
 	&ngx_http_yunsuo_module_ctx,   /* module context */
 	ngx_http_yunsuo_commands,      /* module directives */
 	NGX_HTTP_MODULE,                       /* module type */
