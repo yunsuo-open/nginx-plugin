@@ -102,7 +102,10 @@
                 --with-http_ssl_module --with-http_gzip_static_module \
                 --add-module=../ngx_cache_purge-1.3  --add-module=/home/nginx-plugin-master
 
-- 8.当您的 nginx 版本大于等于 1.8.0 并且安装的云锁为V3时，想要支持 POST 防护，
+- 8. 以下两种情况， 跳过此步骤：	
+	1）您的 nginx 是 tengine。 
+	2）在步骤 6 中 已经做过了配置。
+当您的 nginx 版本大于等于 1.8.0 并且安装的云锁为V3时，想要支持 POST 防护，
 只需在 configure 生成的 Makefile （即 objs/Makefile 文件）中 CFLAGS 追加宏定义 HIGHERTHAN8
 	形如 ：	CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g  
 	修改为：CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g -DHIGHERTHAN8
@@ -111,7 +114,7 @@
 - 10.将系统当前使用中的nginx二进制文件替换为刚刚编译好的包含了云锁模块的nginx文件即可
 	
 
-## 2. 让云锁识别您自己编译的nginx
+## 2. 让云锁识别您自己编译的nginx（V3版本云锁不需要执行此步骤）
 1. 安装云锁，如果您已经安装了云锁，可跳过此步骤。如果还没有，请到http://www.yunsuo.com.cn/ht/software/下载并安装云锁
 2. cd /usr/local/yunsuo_agent/nginx/
 3. ./configure_compile_nginx nginx_install_path (nginx_install_path为nginx的安装路径,即configure时 --prefix=path如果未指定过路径, 那么默认为/usr/local/nginx)
