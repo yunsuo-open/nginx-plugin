@@ -190,6 +190,7 @@ static ngx_http_output_header_filter_pt ngx_http_next_header_filter;
 static ngx_http_output_body_filter_pt ngx_http_next_body_filter;
 
 #if defined(TENGINE) 
+#if !defined (HIGHERTHAN8)
 ngx_http_input_body_filter_pt     ngx_http_top_input_body_filter;
 static ngx_http_input_body_filter_pt  ngx_http_next_input_body_filter;
 ngx_int_t tengine_http_yunsuo_post_body_filter(ngx_http_request_t *r, ngx_buf_t *buf)
@@ -200,6 +201,7 @@ ngx_int_t tengine_http_yunsuo_post_body_filter(ngx_http_request_t *r, ngx_buf_t 
 	}
 	return ngx_http_next_input_body_filter(r, buf);
 }
+#endif
 #endif
 
 #if defined (HIGHERTHAN8)
@@ -297,6 +299,7 @@ static void set_out_header(void *request, const char* name, const char* val, int
 		r->headers_out.content_type.len = sizeof("text/html")-1;
 		r->headers_out.status = NGX_HTTP_OK;
 		r->headers_out.content_length_n = len;
+		ngx_str_set(&r->headers_out.status_line, "200 OK");
 	}
 	else
 	{
@@ -697,8 +700,10 @@ static ngx_int_t ngx_http_yunsuo_filter_init(ngx_conf_t *cf)
 	ngx_http_top_body_filter = ngx_http_yunsuo_body_filter;
 
 #if defined(TENGINE)
+#if !defined (HIGHERTHAN8)
 	ngx_http_next_input_body_filter = ngx_http_top_input_body_filter;
 	ngx_http_top_input_body_filter = tengine_http_yunsuo_post_body_filter;
+#endif
 #endif
 
 #if defined (HIGHERTHAN8)
