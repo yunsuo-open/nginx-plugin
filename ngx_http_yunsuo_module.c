@@ -14,6 +14,8 @@
 #include <arpa/inet.h>
 #endif
 
+int response_404 = 0;
+
 #if !defined (WIN32)
 #include <dlfcn.h>
 #define GetProcAddress dlsym
@@ -31,6 +33,7 @@ HMODULE hMod;
 int use_ngx_plugin = 0;
 
 typedef void (*frame_init_pt)();
+typedef int (*response_return_404_pt)();
 typedef void (*frame_release_pt)();
 typedef void (*set_set_out_header_pt)(void *set_out_header_pt);
 typedef void (*set_register_connection_cleanup_pt)(void *register_connection_cleanup_pt);
@@ -53,6 +56,7 @@ typedef int (*post_in_check_pt)(void *data, void *post_buf);
 typedef int (*post_in_check2_pt)(void *data, void *post_buf);
 
 frame_init_pt frame_init;
+response_return_404_pt response_return_404;
 frame_release_pt frame_release;
 set_set_out_header_pt set_set_out_header_handler;
 set_register_connection_cleanup_pt set_register_connection_cleanup_handler;
@@ -140,6 +144,7 @@ int init_functions(ngx_cycle_t *cycle)
 	if (hMod)
 	{
 		frame_init = GetProcAddress(hMod, "frame_init");
+		response_return_404 = GetProcAddress(hMod, "response_return_404");
 		frame_release = GetProcAddress(hMod, "frame_release");
 		set_set_out_header_handler = GetProcAddress(hMod, "set_set_out_header_handler");
 		set_register_connection_cleanup_handler = GetProcAddress(hMod, "set_register_connection_cleanup_handler");
@@ -356,7 +361,14 @@ int ngx_http_write_back(void *request, const char* content_type, const char* htm
 
 	r->headers_out.content_type.len = content_type_len;
 	r->headers_out.content_type.data = (u_char*)content_type;
-	r->headers_out.status = NGX_HTTP_NOT_FOUND;//NGX_HTTP_OK;
+	if (response_404)
+	{
+		r->headers_out.status = NGX_HTTP_NOT_FOUND;
+	}
+	else
+	{
+		r->headers_out.status = NGX_HTTP_OK;
+	}
 
 	b = ngx_create_temp_buf(r->pool, html_len);
 	if(!b) 
@@ -651,8 +663,12 @@ static ngx_int_t yunsuo_init_process(ngx_cycle_t *cycle)
 	}
 	use_ngx_plugin = 1;
 
-	frame_init();
 
+	frame_init();
+	if (NULL != response_return_404)
+	{
+		response_404 = response_return_404();
+	}
 	set_set_out_header_handler(set_out_header);
 	set_register_connection_cleanup_handler(register_connection_cleanup_handler);
 	set_register_request_cleanup_handler(register_request_cleanup_handler);
