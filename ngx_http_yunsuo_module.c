@@ -356,7 +356,7 @@ int ngx_http_write_back(void *request, const char* content_type, const char* htm
 
 	r->headers_out.content_type.len = content_type_len;
 	r->headers_out.content_type.data = (u_char*)content_type;
-	r->headers_out.status = NGX_HTTP_OK;
+	r->headers_out.status = NGX_HTTP_NOT_FOUND;//NGX_HTTP_OK;
 
 	b = ngx_create_temp_buf(r->pool, html_len);
 	if(!b) 
