@@ -647,10 +647,20 @@ void get_request_or_response_data_handler(void *request, void *data, int data_ty
 			store_data_by_type("Post-Bufs", 9, (void*)r->request_body->bufs, 0, data, 2);
 		}
 	}
-	else {
+	else if(6 == data_type){
 		if (r->headers_in.content_type && r->headers_in.content_type->value.data)
 		{
 			store_data_by_type("Content-Type_IN", 15, (char*)r->headers_in.content_type->value.data, r->headers_in.content_type->value.len, data, 0);
+		}
+	}
+	else if(7 == data_type)
+	{
+		if (NULL == r->args.data || 0 == r->args.len)
+		{
+			if (r->uri.data && r->uri.len > 4 && r->uri.len < 512)
+			{
+				memcpy(data, (char*)r->uri.data, r->uri.len);
+			}
 		}
 	}
 }
