@@ -546,7 +546,14 @@ void get_request_or_response_data_handler(void *request, void *data, int data_ty
 	{
 		if (r->connection && r->connection->addr_text.data)
 		{
-			store_data_by_type("Remote-Ip", 9, (char*)r->connection->addr_text.data, r->connection->addr_text.len, data, 0);
+			if ((0 == r->headers_in.x_forwarded_for.nelts) && (r->connection->proxy_protocol_addr.len != 0))
+			{
+				store_data_by_type("Remote-Ip", 9, (char*)(r->connection->proxy_protocol_addr.data), r->connection->proxy_protocol_addr.len, data, 0);
+			}
+			else
+			{
+				store_data_by_type("Remote-Ip", 9, (char*)r->connection->addr_text.data, r->connection->addr_text.len, data, 0);
+			}
 		}
 
 		if (r->connection && r->connection->listening && r->connection->listening->addr_text.data)
