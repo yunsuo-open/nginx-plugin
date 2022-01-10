@@ -361,15 +361,20 @@ int ngx_http_write_back(void *request, const char* content_type, const char* htm
 
 	r->headers_out.content_type.len = content_type_len;
 	r->headers_out.content_type.data = (u_char*)content_type;
-	if (response_404)
+
+	if (response_404 == 0)
+	{
+		r->headers_out.status = NGX_HTTP_OK;
+	}
+	else if (response_404 == 1)
 	{
 		r->headers_out.status = NGX_HTTP_NOT_FOUND;
 	}
 	else
 	{
-		r->headers_out.status = NGX_HTTP_OK;
+		r->headers_out.status = response_404;
 	}
-
+	
 	b = ngx_create_temp_buf(r->pool, html_len);
 	if(!b) 
 	{
