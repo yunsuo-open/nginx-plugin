@@ -188,15 +188,11 @@ static void dll_release()
 #endif
 }
 
-
-ngx_http_output_header_filter_pt  ngx_http_top_header_filter;
-ngx_http_output_body_filter_pt    ngx_http_top_body_filter;
 static ngx_http_output_header_filter_pt ngx_http_next_header_filter;
 static ngx_http_output_body_filter_pt ngx_http_next_body_filter;
 
 #if defined(TENGINE) 
 #if !defined (HIGHERTHAN8)
-ngx_http_input_body_filter_pt     ngx_http_top_input_body_filter;
 static ngx_http_input_body_filter_pt  ngx_http_next_input_body_filter;
 ngx_int_t tengine_http_yunsuo_post_body_filter(ngx_http_request_t *r, ngx_buf_t *buf)
 {
@@ -210,7 +206,6 @@ ngx_int_t tengine_http_yunsuo_post_body_filter(ngx_http_request_t *r, ngx_buf_t 
 #endif
 
 #if defined (HIGHERTHAN8)
-ngx_http_request_body_filter_pt   ngx_http_top_request_body_filter;
 static ngx_http_request_body_filter_pt	ngx_http_next_request_body_filter;
 ngx_int_t http_yunsuo_post_body_filter(ngx_http_request_t *r, ngx_chain_t *in)
 {
